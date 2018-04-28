@@ -32,7 +32,7 @@ app.get('/result/:choice',(req,res) => {
     console.log(x);
     res.json({
  "messages": [
-   {"text": "Welcome to the Chatfuel Rockets!"},
+   {"text": x},
    {"text": "What are you up to?"}
  ]
 });
