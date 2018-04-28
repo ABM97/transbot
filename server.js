@@ -29,7 +29,7 @@ app.get('/result/:choice',(req,res) => {
     console.log(JSON.stringify((domesticRoute.path(src, dst,{cost:true}))));
     var x  = domesticRoute.path(src, dst,{cost:true}).cost;
     console.log(x);
-    res.send({"cost" : x});
+    res.send({"message" : [{"cost":x}]});
 
   } else if (choice[0]==='Uber') {
 
