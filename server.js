@@ -4,6 +4,11 @@ var {getMatch} = require('./min-edit');
 var {domesticRoute} = require('./graphs/graphs-domestic');
 var {metroRoute} = require('./graphs/graphs-metro');
 
+
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 //require('./../graphs-metro');
 
 var app = express();
@@ -30,12 +35,21 @@ app.get('/result/:choice',(req,res) => {
     //console.log(JSON.stringify((domesticRoute.path(src, dst,{cost:true}))));
     var result  = domesticRoute.path(src, dst,{cost:true});
     var cost = result.cost;
-    var path = result.path.toString();
-    console.log(path);
+    var path = result.path;
+    for(i=0;i<path.length;i++){
+      path[i]=capitalizeFirstLetter(path[i]);
+    }
+    //console.log(path);
+
+    path=path.toString().replace(/,/g , ' to ');
+    var result ="ROUTE: "+path;
+  //  console.log(result);;
+
+    //console.log(path);
     res.json({
  "messages": [
    {"text": cost},
-   {"text": path}
+   {"text": result}
  ]
 });
 
