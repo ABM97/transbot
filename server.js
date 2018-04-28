@@ -26,7 +26,8 @@ app.get('/result/:choice',(req,res) => {
   if(choice[0]==='Metro'){
 
   } else if (choice[0]==='Domestic') {
-    res.json(domesticRoute.path(src, dst,{cost:true}));
+    console.log(JSON.stringify((domesticRoute.path(src, dst,{cost:true}))));
+    res.json(JSON.stringify(domesticRoute.path(src, dst,{cost:true})));
 
   } else if (choice[0]==='Uber') {
 
