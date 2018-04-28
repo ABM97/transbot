@@ -23,13 +23,14 @@ app.get('/route/:src/:dst',(req,res) => {
 app.get('/result/:choice',(req,res) => {
   choice=req.params.choice;
   choice=choice.split('+');
+  console.log(choice[0]);
   if(choice[0]==='Metro'){
 
   } else if (choice[0]==='Domestic') {
     console.log(JSON.stringify((domesticRoute.path(src, dst,{cost:true}))));
     var x  = domesticRoute.path(src, dst,{cost:true}).cost;
     console.log(x);
-    res.send({"message" : [{"cost":x}]});
+    res.json({"message" : [{"cost":x}]});
 
   } else if (choice[0]==='Uber') {
 
