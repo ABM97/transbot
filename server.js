@@ -27,13 +27,15 @@ app.get('/result/:choice',(req,res) => {
   if(choice[0]==='Metro'){
 
   } else if (choice[0]==='Domestic') {
-    console.log(JSON.stringify((domesticRoute.path(src, dst,{cost:true}))));
-    var x  = domesticRoute.path(src, dst,{cost:true}).cost;
-    console.log(x);
+    //console.log(JSON.stringify((domesticRoute.path(src, dst,{cost:true}))));
+    var result  = domesticRoute.path(src, dst,{cost:true});
+    var cost = result.cost;
+    var path = result.path.toString();
+    console.log(path);
     res.json({
  "messages": [
-   {"text": x},
-   {"text": "What are you up to?"}
+   {"text": cost},
+   {"text": path}
  ]
 });
 
