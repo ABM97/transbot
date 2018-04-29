@@ -25,7 +25,9 @@ var dst;
 var choice;
 app.get('/route/:src/:dst', (req, res) => {
   src = getMatch(req.params.src);
+  console.log(src);
   dst = getMatch(req.params.dst);
+  console.log(dst);
   res.status(200).send();
 });
 
@@ -45,7 +47,9 @@ app.get('/result/:choice', (req, res) => {
 
 
         var nearestMetrotoSrc = UniformCostSearch(src);
+        // console.log(nearestMetrotoSrc);
           var nearestMetrotoDst = UniformCostSearch(dst);
+          // console.log(nearestMetrotoDst);
         var fromSourcetoMetro = domesticRoute.path(src,nearestMetrotoSrc,{cost:true});
         var fromSourcetoMetroPath = fromSourcetoMetro.path;
         console.log(fromSourcetoMetroPath);
