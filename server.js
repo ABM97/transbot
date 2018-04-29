@@ -156,9 +156,7 @@ var toMetroDistance = `Distance to Metro is ${fromSourcetoMetro.cost} Kilometers
       "messages": [
         {
           "text": result
-        }, {
-          "text": stations
-        }, {
+        },{
           "text": cost
         }, {
           "text": time
@@ -184,8 +182,6 @@ var toMetroDistance = `Distance to Metro is ${fromSourcetoMetro.cost} Kilometers
       "messages": [
         {
           "text": result
-        }, {
-          "text": stations
         }, {
           "text": cost
         }, {
