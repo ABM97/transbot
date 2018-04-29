@@ -81,7 +81,7 @@ var toMetroDistance = `Distance to Metro is ${fromSourcetoMetro.cost} Kilometers
       var domesticDistance = `Distance is ${result.cost} Kilometers`;
       var domesticPath = result.path;
       var cost = `Total Cost of your trip is ${(domesticPath.length +fromSourcetoMetroLength) * 1.75 + 2} Pounds`;
-      var time = `Estimated total time of your trip is ${(result.cost + fromSourcetoMetro)  * 1.25 + metroTime} Minutes`;
+      var time = `Estimated total time of your trip is ${(result.cost + toMetroDist)  * 1.25 + metroTime} Minutes`;
       for (i = 0; i < domesticPath.length; i++) {
         domesticPath[i] = capitalizeFirstLetter(domesticPath[i]);
       }
