@@ -2,10 +2,9 @@ const Graph = require('node-dijkstra');
 
 const metroRoute = new Graph();
 
-metroRoute.addNode('Maadi', { Sayeda:6 , Dokki:10 ,FCI:12});
-metroRoute.addNode('Sayeda', { Dokki:4, Maadi:6 , FCI:6});
-metroRoute.addNode('FCI', { Dokki:2,Sayeda:6,Maadi:12 });
-metroRoute.addNode('Dokki', { Maadi:10,FCI:2, Sayeda:4 });
-//console.log(metroRoute.path('Maadi', 'FCI',{cost:true}));
+metroRoute.addNode('maadi', { sayeda:6 , dokki:10 ,fci:12});
+metroRoute.addNode('sayeda', { dokki:4, maadi:6 , fci:6});
+metroRoute.addNode('fci', { dokki:2,sayeda:6,maadi:12 });
+metroRoute.addNode('dokki', { maadi:10,fci:2, sayeda:4 });
 
 module.exports={metroRoute};

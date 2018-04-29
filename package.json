@@ -12,6 +12,8 @@
     "body-parser": "^1.15.2",
     "express": "^4.16.3",
     "graphlib": "^2.1.5",
+    "hashset": "0.0.6",
+    "js-priority-queue": "^0.1.5",
     "levenshtein-edit-distance": "^2.0.2",
     "node-dijkstra": "^2.5.0"
   },

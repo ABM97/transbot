@@ -10,6 +10,5 @@ domesticRoute.addNode('dokki', { fci:3, zamalek:4 });
 domesticRoute.addNode('zamalek', { dokki:4 });
 domesticRoute.addNode('auc', { tagamoa:10});
 domesticRoute.addNode('tagamoa', {maadi:23, auc:10});
-//console.log(domesticRoute.path('auc', 'ass',{cost:true}));
 
 module.exports = {domesticRoute};
