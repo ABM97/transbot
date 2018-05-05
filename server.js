@@ -1,12 +1,19 @@
 const express = require('express');
-var {UniformCostSearch}=require('./uniformSearch');
+
+var {
+  UniformCostSearch
+} = require('./uniformSearch');
+
 const bodyParser = require('body-parser');
+
 var {
   getMatch
 } = require('./min-edit');
+
 var {
   domesticRoute
 } = require('./graphs/graphs-domestic');
+
 var {
   metroRoute
 } = require('./graphs/graphs-metro');
@@ -25,111 +32,192 @@ var dst;
 var choice;
 app.get('/route/:src/:dst', (req, res) => {
   src = getMatch(req.params.src);
-  console.log(src);
+
   dst = getMatch(req.params.dst);
-  console.log(dst);
+
   res.status(200).send();
 });
 
 app.get('/result/:choice', (req, res) => {
   choice = req.params.choice;
   choice = choice.split('+');
-  console.log(choice[0]);
-  if (choice[0] === 'Metro') {
 
+  if (choice[0] === 'Metro') {
     var result = metroRoute.path(src, dst, {cost: true});
-  //  console.log(result.path);
     var cost = 'Cost is 2 Pounds';
     var stations = `Number of stations: ${result.cost}`;
     var time = `Estimated time is ${result.cost * 3} minutes`;
     var path = result.path;
     if (!path) {
+      var nearestMetrotoSrc = UniformCostSearch(src);
+      var nearestMetrotoDst = UniformCostSearch(dst);
+      if (src === nearestMetrotoSrc) {
+        var result = metroRoute.path(nearestMetrotoSrc, nearestMetrotoDst, {cost: true});
+        var stations = `Number of stations: ${result.cost}`;
+        var metroTime = result.cost * 3;
+        var metroPath = result.path;
 
+        for (i = 0; i < metroPath.length; i++) {
+          metroPath[i] = capitalizeFirstLetter(metroPath[i]);
+        }
+        metroPath = metroPath.toString().replace(/,/g, ' to ');
+        var metroResult = "Metro ROUTE: " + metroPath;
 
-        var nearestMetrotoSrc = UniformCostSearch(src);
-        // console.log(nearestMetrotoSrc);
-          var nearestMetrotoDst = UniformCostSearch(dst);
-          // console.log(nearestMetrotoDst);
-        var fromSourcetoMetro = domesticRoute.path(src,nearestMetrotoSrc,{cost:true});
+        result = domesticRoute.path(nearestMetrotoDst, dst, {cost: true});
+        var domesticDistance = `Distance is ${result.cost} Kilometers`;
+        var domesticPath = result.path;
+        var cost = `Total Cost of your trip is ${domesticPath.length * 1.75 + 2} Pounds`;
+        var time = `Estimated total time of your trip is ${ (result.cost) * 1.25 + metroTime} Minutes`;
+        for (i = 0; i < domesticPath.length; i++) {
+          domesticPath[i] = capitalizeFirstLetter(domesticPath[i]);
+        }
+        domesticPath = domesticPath.toString().replace(/,/g, ' to ');
+        var domesticResult = "Domestic ROUTE: " + domesticPath;
+        res.json({
+          "messages": [
+            {
+              "text": metroResult
+            }, {
+              "text": stations
+            }, {
+              "text": domesticResult
+            }, {
+              "text": domesticDistance
+            }, {
+              "text": cost
+            }, {
+              "text": time
+            }
+          ]
+        });
+
+      } else if (dst === nearestMetrotoDst) {
+        var fromSourcetoMetro = domesticRoute.path(src, nearestMetrotoSrc, {cost: true});
         var fromSourcetoMetroPath = fromSourcetoMetro.path;
-        console.log(fromSourcetoMetroPath);
+
         var fromSourcetoMetroLength = fromSourcetoMetroPath.length;
-var toMetroDist=fromSourcetoMetro.cost;
-var toMetroDistance = `Distance to Metro is ${fromSourcetoMetro.cost} Kilometers`;
+        var toMetroDist = fromSourcetoMetro.cost;
+        var toMetroDistance = `Distance to Metro is ${fromSourcetoMetro.cost} Kilometers`;
 
+        for (i = 0; i < fromSourcetoMetroPath.length; i++) {
+          fromSourcetoMetroPath[i] = capitalizeFirstLetter(fromSourcetoMetroPath[i]);
+        }
 
-      for (i = 0; i < fromSourcetoMetroPath.length; i++) {
-        fromSourcetoMetroPath[i] = capitalizeFirstLetter(fromSourcetoMetroPath[i]);
+        fromSourcetoMetroPath = fromSourcetoMetroPath.toString().replace(/,/g, ' to ');
+
+        var fromSourcetoMetroPath = "Domestic ROUTE to Metro: " + fromSourcetoMetroPath;
+
+        var result = metroRoute.path(nearestMetrotoSrc, nearestMetrotoDst, {cost: true});
+
+        var stations = `Number of stations: ${result.cost}`;
+        var metroTime = result.cost * 3;
+        var metroPath = result.path;
+
+        for (i = 0; i < metroPath.length; i++) {
+          metroPath[i] = capitalizeFirstLetter(metroPath[i]);
+        }
+
+        metroPath = metroPath.toString().replace(/,/g, ' to ');
+        var metroResult = "Metro ROUTE: " + metroPath;
+        var cost = `Total Cost of your trip is ${fromSourcetoMetroLength * 1.75 + 2} Pounds`;
+        var time = `Estimated total time of your trip is ${toMetroDist * 1.25 + metroTime} Minutes`;
+
+        res.json({
+          "messages": [
+            {
+              "text": fromSourcetoMetroPath
+            }, {
+              "text": toMetroDistance
+            }, {
+              "text": metroResult
+            }, {
+              "text": stations
+            }, {
+              "text": cost
+            }, {
+              "text": time
+            }
+          ]
+        });
+
+      } else {
+        //both are not metro;
+
+        var fromSourcetoMetro = domesticRoute.path(src, nearestMetrotoSrc, {cost: true});
+        var fromSourcetoMetroPath = fromSourcetoMetro.path;
+
+        var fromSourcetoMetroLength = fromSourcetoMetroPath.length;
+        var toMetroDist = fromSourcetoMetro.cost;
+        var toMetroDistance = `Distance to Metro is ${fromSourcetoMetro.cost} Kilometers`;
+
+        for (i = 0; i < fromSourcetoMetroPath.length; i++) {
+          fromSourcetoMetroPath[i] = capitalizeFirstLetter(fromSourcetoMetroPath[i]);
+        }
+
+        fromSourcetoMetroPath = fromSourcetoMetroPath.toString().replace(/,/g, ' to ');
+
+        var fromSourcetoMetroPath = "Domestic ROUTE to Metro: " + fromSourcetoMetroPath;
+
+        var result = metroRoute.path(nearestMetrotoSrc, nearestMetrotoDst, {cost: true});
+
+        var stations = `Number of stations: ${result.cost}`;
+        var metroTime = result.cost * 3;
+        var metroPath = result.path;
+
+        for (i = 0; i < metroPath.length; i++) {
+          metroPath[i] = capitalizeFirstLetter(metroPath[i]);
+        }
+
+        metroPath = metroPath.toString().replace(/,/g, ' to ');
+        var metroResult = "Metro ROUTE: " + metroPath;
+
+        var result = domesticRoute.path(nearestMetrotoDst, dst, {cost: true});
+
+        var domesticDistance = `Distance is ${result.cost} Kilometers`;
+        var domesticPath = result.path;
+        var cost = `Total Cost of your trip is ${ (domesticPath.length + fromSourcetoMetroLength) * 1.75 + 2} Pounds`;
+        var time = `Estimated total time of your trip is ${ (result.cost + toMetroDist) * 1.25 + metroTime} Minutes`;
+        for (i = 0; i < domesticPath.length; i++) {
+          domesticPath[i] = capitalizeFirstLetter(domesticPath[i]);
+        }
+
+        domesticPath = domesticPath.toString().replace(/,/g, ' to ');
+        var domesticResult = "Domestic ROUTE: " + domesticPath;
+
+        res.json({
+          "messages": [
+            {
+              "text": fromSourcetoMetroPath
+            }, {
+              "text": toMetroDistance
+            }, {
+              "text": metroResult
+            }, {
+              "text": stations
+            }, {
+              "text": domesticResult
+            }, {
+              "text": domesticDistance
+            }, {
+              "text": cost
+            }, {
+              "text": time
+            }
+          ]
+        });
       }
-
-      fromSourcetoMetroPath = fromSourcetoMetroPath.toString().replace(/,/g, ' to ');
-      console.log(fromSourcetoMetroPath);
-      var fromSourcetoMetroPath = "Domestic ROUTE to Metro: " + fromSourcetoMetroPath;
-
-
-      var result = metroRoute.path(nearestMetrotoSrc, nearestMetrotoDst, {cost: true});
-
-      var stations = `Number of stations: ${result.cost}`;
-      var metroTime = result.cost * 3 ;
-      var metroPath = result.path;
-
-      for (i = 0; i < metroPath.length; i++) {
-        metroPath[i] = capitalizeFirstLetter(metroPath[i]);
-      }
-
-      metroPath = metroPath.toString().replace(/,/g, ' to ');
-      var metroResult = "Metro ROUTE: " + metroPath;
-
-
-      var result = domesticRoute.path(nearestMetrotoDst, dst, {cost: true});
-      var domesticDistance = `Distance is ${result.cost} Kilometers`;
-      var domesticPath = result.path;
-      var cost = `Total Cost of your trip is ${(domesticPath.length +fromSourcetoMetroLength) * 1.75 + 2} Pounds`;
-      var time = `Estimated total time of your trip is ${(result.cost + toMetroDist)  * 1.25 + metroTime} Minutes`;
-      for (i = 0; i < domesticPath.length; i++) {
-        domesticPath[i] = capitalizeFirstLetter(domesticPath[i]);
-      }
-
-      domesticPath = domesticPath.toString().replace(/,/g, ' to ');
-      var domesticResult = "Domestic ROUTE: " + domesticPath;
-
-      res.json({
-        "messages": [
-          {
-              "text":fromSourcetoMetroPath
-          },
-          {
-            "text":toMetroDistance
-          },
-          {
-            "text": metroResult
-          }, {
-            "text": stations
-          }, {
-            "text": domesticResult
-          }, {
-            "text": domesticDistance
-          },{
-            "text": cost
-          },{
-            "text":time
-          }
-        ]
-      });
 
     }
-    else{
     for (i = 0; i < path.length; i++) {
       path[i] = capitalizeFirstLetter(path[i]);
     }
 
     path = path.toString().replace(/,/g, ' to ');
-    var result = "ROUTE: " + path;
-
+    var metroResult = "Metro ROUTE: " + path;
     res.json({
       "messages": [
         {
-          "text": result
+          "text": metroResult
         }, {
           "text": stations
         }, {
@@ -139,8 +227,6 @@ var toMetroDistance = `Distance to Metro is ${fromSourcetoMetro.cost} Kilometers
         }
       ]
     });
-
-}
 
   } else if (choice[0] === 'Domestic') {
 
@@ -160,7 +246,7 @@ var toMetroDistance = `Distance to Metro is ${fromSourcetoMetro.cost} Kilometers
       "messages": [
         {
           "text": result
-        },{
+        }, {
           "text": cost
         }, {
           "text": time
